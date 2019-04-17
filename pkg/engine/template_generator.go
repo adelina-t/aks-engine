@@ -622,10 +622,6 @@ func (t *TemplateGenerator) getTemplateFuncMap(cs *api.ContainerService) templat
 		"GetDefaultInternalLbStaticIPOffset": func() int {
 			return DefaultInternalLbStaticIPOffset
 		},
-		"WriteLinkedTemplatesForExtensions": func() string {
-			extensions := getLinkedTemplatesForExtensions(cs.Properties)
-			return extensions
-		},
 		"HasMultipleSshKeys": func() bool {
 			return len(cs.Properties.LinuxProfile.SSH.PublicKeys) > 1
 		},

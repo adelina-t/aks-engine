@@ -953,8 +953,9 @@ func getKubernetesPodStartIndex(properties *api.Properties) int {
 // getLinkedTemplatesForExtensions returns the
 // Microsoft.Resources/deployments for each extension
 //func getLinkedTemplatesForExtensions(properties api.Properties) string {
-func getLinkedTemplatesForExtensions(properties *api.Properties) string {
+func getLinkedTemplatesForExtensions(properties *api.Properties) interface{} {
 	var result string
+	var extensionsARM interface{}
 
 	extensions := properties.ExtensionProfiles
 	masterProfileExtensions := properties.MasterProfile.Extensions
@@ -969,7 +970,7 @@ func getLinkedTemplatesForExtensions(properties *api.Properties) string {
 			dta, e := getMasterLinkedTemplateText(properties.MasterProfile, orchestratorType, extensionProfile, singleOrAll)
 			if e != nil {
 				fmt.Println(e.Error())
-				return ""
+				return nil
 			}
 			result += dta
 		}
@@ -982,15 +983,20 @@ func getLinkedTemplatesForExtensions(properties *api.Properties) string {
 				dta, e := getAgentPoolLinkedTemplateText(agentPoolProfile, orchestratorType, extensionProfile, singleOrAll)
 				if e != nil {
 					fmt.Println(e.Error())
-					return ""
+					return nil
 				}
 				result += dta
 			}
 
 		}
 	}
+	result = strings.TrimPrefix(result, ",")
+	if err := json.Unmarshal([]byte(result), &extensionsARM); err != nil {
+		fmt.Println(err.Error())
+		return nil
+	}
 
-	return result
+	return extensionsARM
 }
 
 func getMasterLinkedTemplateText(masterProfile *api.MasterProfile, orchestratorType string, extensionProfile *api.ExtensionProfile, singleOrAll string) (string, error) {

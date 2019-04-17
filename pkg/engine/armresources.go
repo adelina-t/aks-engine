@@ -71,6 +71,9 @@ func GenerateARMResources(cs *api.ContainerService) []interface{} {
 
 	}
 
+	extensionTemplates := getLinkedTemplatesForExtensions(cs.Properties)
+	armResources = append(armResources, extensionTemplates)
+
 	return armResources
 }
 
